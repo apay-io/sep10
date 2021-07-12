@@ -51,7 +51,10 @@ class RestError extends Error implements ResponsePayload {
     this.name = this.constructor.name
     this.status = status
     this.statusText = statusText
-    this.data = data
+    this.data = {
+      error: message,
+      data
+    }
   }
 }
 

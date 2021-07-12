@@ -1,4 +1,5 @@
 import { Handler, Query, HTTPMethod, Route } from '../src/@types/http'
+import { logger } from '../src/utils/logger';
 
 export default function setup({
   worker,
@@ -14,6 +15,7 @@ export default function setup({
 
   const findRoute = createRouter(routes)
   addEventListener('fetch', (event) => {
+    logger.info(findRoute(event.request));
     event.respondWith(handleRequest(event.request, findRoute(event.request)))
   })
 }
@@ -47,6 +49,7 @@ function createRouter(routeDefinitions: Route[]) {
   return (request: Request) => {
     const url = new URL(request.url)
     const method = request.method as HTTPMethod
+    const headers = request.headers;
 
     const { handler } =
       routes.find((route) =>
@@ -63,13 +66,13 @@ function createRouter(routeDefinitions: Route[]) {
       }
     }
 
-    return { handler, url, query }
+    return { handler, headers, url, query }
   }
 }
 
 async function handleRequest(
   request: Request,
-  { handler, url, query }: { handler?: Handler; url: URL; query: Query }
+  { handler, headers, url, query }: { handler?: Handler; headers: Headers; url: URL; query: Query }
 ) {
   if (!handler) {
     return buildResponse({
@@ -81,13 +84,18 @@ async function handleRequest(
   }
 
   try {
-    const body = (await request.json()) || {}
+    let body = {};
+    try {
+      body = (await request.json()) || {}
+    } catch(err) {}
 
     const { data = null, status = 200, statusText = 'ok', message = 'ok' } =
-      (await handler({ body, url, query })) || {}
+      (await handler({ body, headers, url, query })) || {}
+    logger.info({ data, message, status, statusText });
 
     return buildResponse({ data, status, statusText, message })
   } catch (error) {
+    logger.error(error);
     return buildResponse(error)
   }
 }
@@ -110,12 +118,7 @@ function buildResponse({
   let payload
 
   try {
-    payload = JSON.stringify({
-      message,
-      status,
-      statusText,
-      data,
-    })
+    payload = JSON.stringify(data || {})
   } catch {
     payload = `{"message":${message},"status":500}`
   }

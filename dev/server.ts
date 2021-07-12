@@ -58,6 +58,6 @@ export default function serve({ port = 1337 } = {}) {
           }
         })
       })
-      .listen(port, resolve)
+      .listen(port, resolve as any)
   )
 }

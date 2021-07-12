@@ -21,6 +21,7 @@ export type ResponsePayload = {
 export type Handler = {
   (payload: {
     body?: object
+    headers: object
     url: URL
     query: Query
   }): Promise<ResponsePayload | void>
