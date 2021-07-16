@@ -1,5 +1,6 @@
 const path = require('path')
 const Dotenv = require('dotenv-webpack')
+const webpack = require('webpack')
 
 const mode = process.env.NODE_ENV || 'production'
 
@@ -32,5 +33,12 @@ module.exports = {
       path: path.resolve(__dirname, '.env.' + mode),
       safe: path.resolve(__dirname, '.env.development'),
     }),
-  ],
+    new webpack.IgnorePlugin({
+      resourceRegExp: /sodium-native/
+    }),
+    new webpack.NormalModuleReplacementPlugin(
+      /detect-node/,
+      path.resolve(__dirname, 'detect-node.js')
+    ),
+],
 }

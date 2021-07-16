@@ -1,6 +1,6 @@
 import { Handler, Route } from '../@types/http'
 import { logger } from '../utils/logger'
-import { UserInputError } from '../utils/http'
+import { UnknownError, UserInputError } from '../utils/http'
 import { Keypair, StrKey, Utils } from 'stellar-sdk';
 
 const handler: Handler = async function ({ query }) {
@@ -17,18 +17,23 @@ const handler: Handler = async function ({ query }) {
 
   const networkPassphrase = process.env.NETWORK as string;
 
-  return {
-    data: {
-      transaction: Utils.buildChallengeTx(
-        Keypair.fromSecret(process.env.SIGNING_SECRET as string),
-        account,
-        'apay.io',
-        86400,
-        networkPassphrase,
-        'sep10.apay.workers.dev',
-      ),
-      network_passphrase: networkPassphrase,
-    },
+  try {
+    return {
+      data: {
+        transaction: Utils.buildChallengeTx(
+          Keypair.fromSecret(process.env.SIGNING_SECRET as string),
+          account,
+          'apay.io',
+          86400,
+          networkPassphrase,
+          'sep10.apay.workers.dev',
+        ),
+        network_passphrase: networkPassphrase,
+      },
+    }
+  } catch (err) {
+    logger.error(err);
+    throw new UnknownError('Unknown error', { error: err.message, stack: err.stack });
   }
 }
 
