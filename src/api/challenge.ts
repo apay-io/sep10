@@ -17,24 +17,19 @@ const handler: Handler = async function ({ query }) {
 
   const networkPassphrase = process.env.NETWORK as string;
 
-  try {
-    return {
-      data: {
-        transaction: Utils.buildChallengeTx(
-          Keypair.fromSecret(process.env.SIGNING_SECRET as string),
-          account,
-          'apay.io',
-          86400,
-          networkPassphrase,
-          'sep10.apay.workers.dev',
-        ),
-        network_passphrase: networkPassphrase,
-      },
-    }
-  } catch (err) {
-    logger.error(err);
-    throw new UnknownError('Unknown error', { error: err.message, stack: err.stack });
+  return {
+    data: {
+      transaction: Utils.buildChallengeTx(
+        Keypair.fromSecret(process.env.SIGNING_SECRET as string),
+        account,
+        'test.apay.io',
+        86400,
+        networkPassphrase,
+        'sep10.apay.workers.dev',
+      ),
+      network_passphrase: networkPassphrase,
+    },
   }
 }
 
-export default ['GET', '/challenge', handler] as Route
+export default ['GET', '/', handler] as Route

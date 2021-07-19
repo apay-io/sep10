@@ -15,7 +15,7 @@ export default function setup({
 
   const findRoute = createRouter(routes)
   addEventListener('fetch', (event) => {
-    logger.info(findRoute(event.request));
+    // logger.info(findRoute(event.request));
     event.respondWith(handleRequest(event.request, findRoute(event.request)))
   })
 }
@@ -86,7 +86,11 @@ async function handleRequest(
   try {
     let body = {};
     try {
-      body = (await request.json()) || {}
+      const formData = await request.formData()
+      for (const entry of formData.entries()) {
+        // @ts-ignore
+        body[entry[0]] = entry[1]
+      }
     } catch(err) {}
 
     const { data = null, status = 200, statusText = 'ok', message = 'ok' } =
@@ -95,7 +99,7 @@ async function handleRequest(
 
     return buildResponse({ data, status, statusText, message })
   } catch (error) {
-    logger.error(error);
+    logger.error(error, error.stack);
     return buildResponse(error)
   }
 }
@@ -128,6 +132,9 @@ function buildResponse({
     statusText,
     headers: {
       'content-type': 'application/json',
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET,HEAD,POST,OPTIONS",
+      "Access-Control-Max-Age": "86400",
     },
   })
 }
