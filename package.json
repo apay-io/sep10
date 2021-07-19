@@ -13,10 +13,10 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "2.2.2",
-    "@types/lodash.clone": "^4.5.6",
-    "@types/node": "^14.17.5",
+    "@types/lodash.clone": "4.5.6",
+    "@types/node": "14.17.5",
     "@types/node-fetch": "2.5.11",
-    "@types/randombytes": "^2.0.0",
+    "@types/randombytes": "2.0.0",
     "dotenv": "8.6.0",
     "dotenv-webpack": "2.0.0",
     "node-fetch": "2.6.1",
@@ -28,7 +28,7 @@
     "webpack": "4.46.0"
   },
   "dependencies": {
-    "jose": "^3.5.1-experimental",
-    "stellar-sdk": "^8.2.3"
+    "jose": "3.5.1-experimental",
+    "stellar-sdk": "8.2.3"
   }
 }
