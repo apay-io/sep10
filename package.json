@@ -28,7 +28,7 @@
     "webpack": "4.46.0"
   },
   "dependencies": {
-    "jose": "^3.5.1-experimental",
+    "jose": "3.20.4",
     "stellar-sdk": "^8.2.3"
   }
 }
